@@ -21,33 +21,25 @@ function App() {
 
   function Delete(id) {
     deleteProduct(id).then(() => {
-      const updatedProducts = products.filter(item => item.id !== id);
-      setProducts(updatedProducts);
+      const deleteProducts = products.filter(item => item.id !== id);
+      setProducts(deleteProducts);
       alert("product deleted successfully");
     });
   }
 
-  function handleUpdate() {
-    const item = { title, description, price };
-    updateProduct(productId, item).then(() => {
-      const updatedProducts = products.map(prod =>
-        prod.id === productId ? { ...prod, title, description, price } : prod
-      );
-      setProducts(updatedProducts);
-      resetForm();
-      alert("product updated successfully");
-    });
-  }
+function handleUpdate(item) {
+  updateProduct(item.id, item).then(() => {
+    const updatedProducts = products.map(prod =>
+      prod.id === item.id ? item : prod
+    );
+    setProducts(updatedProducts);
+    alert("product updated successfully");
+  });
+}
 
-  function handleAdd() {
-    if (!title.trim() || !description.trim() || !price) {
-        alert("pls fill all fields");
-        return;
-    }
-    const item = { title, description, price };
+  function handleAdd(item) {
     addProduct(item).then(resp => {
       setProducts([resp, ...products]);
-      resetForm();
       alert("product added successfully")
     });
   }
@@ -59,12 +51,7 @@ function App() {
     setProductId(product.id);
   }
 
-  function resetForm() {
-    setTitle("");
-    setDescription("");
-    setPrice("");
-    setProductId(null);
-  }
+
 
   return (
     <>
@@ -72,7 +59,13 @@ function App() {
         <h1 >CRUD operation</h1>
         <ProductForm 
           formData={{ title, description, price, productId }}
-          setFormData={{ setTitle, setDescription, setPrice }}
+          setFormData={(data) => {
+              setTitle(data.title || "");
+              setDescription(data.description || "");
+              setPrice(data.price || "");
+              setProductId(data.productId || null);
+            }}
+
           addProduct={handleAdd}
           updateProduct={handleUpdate}
         />

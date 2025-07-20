@@ -1,4 +1,3 @@
-// src/api/productAPI.js
 
 // Get All Products
 export function getProduct() {
